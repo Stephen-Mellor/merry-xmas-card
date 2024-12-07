@@ -1,35 +1,23 @@
 ---
-import type { ImageMetadata } from 'astro';
-import { Image } from 'astro:assets';
-import baubleImage from '../assets/bauble.png';
-import christmasPuddingImage from '../assets/christmas-pudding.png';
-import hollyImage from '../assets/holly.png';
-import presentImage from '../assets/present.png';
-import santaHatImage from '../assets/santa-hat.png';
-import sleighImage from '../assets/sleigh.png';
-import snowflakeImage from '../assets/snowflake.png';
-import snowmanImage from '../assets/snowman.png';
-import stockingImage from '../assets/stocking.png';
-import treeImage from '../assets/tree.png';
 import { hash, hexStringToDecimalDigit } from '../utils/string';
 
 type Props = {
   name: string;
 }
 
-type XmasImage = {src: ImageMetadata, alt: string}
+type XmasImage = {src: string, alt: string}
 
 const images: {[key: number]: XmasImage} = {
-  0: {src: baubleImage, alt: "Bauble"},
-  1: {src: christmasPuddingImage, alt: "Christmas Pudding"},
-  2: {src: hollyImage, alt: "Sprig of Holly"},
-  3: {src: presentImage, alt: "Christmas Present"},
-  4: {src: santaHatImage, alt: "Santa Hat"},
-  5: {src: sleighImage, alt: "Sleigh"},
-  6: {src: snowflakeImage, alt: "Snowflake"},
-  7: {src: snowmanImage, alt: "Snowman"},
-  8: {src: stockingImage, alt: "Christmas Stocking"},
-  9: {src: treeImage, alt: "Christmas Tree"},
+  0: {src: "/assets/bauble.png", alt: "Bauble"},
+  1: {src: "/assets/christmas-pudding.png", alt: "Christmas Pudding"},
+  2: {src: "/assets/holly.png", alt: "Sprig of Holly"},
+  3: {src: "/assets/present.png", alt: "Christmas Present"},
+  4: {src: "/assets/santa-hat.png", alt: "Santa Hat"},
+  5: {src: "/assets/sleigh.png", alt: "Sleigh"},
+  6: {src: "/assets/snowflake.png", alt: "Snowflake"},
+  7: {src: "/assets/snowman.png", alt: "Snowman"},
+  8: {src: "/assets/stocking.png", alt: "Christmas Stocking"},
+  9: {src: "/assets/tree.png", alt: "Christmas Tree"},
 }
 
 const {name} = Astro.props;
@@ -39,7 +27,7 @@ const image: XmasImage | null = name == "" ? null : images[hexStringToDecimalDig
 <div>
 <main>
 
-  {image ? <Image src={image.src} alt={image.alt} /> : <span />}
+  {image ? <img src={image.src} alt={image.alt} /> : <span />}
   <section>
     {name == "" ? <><p>Error 404</p><p>Christmas Card</p><p>Not Found</p></> :
     <>
@@ -49,7 +37,7 @@ const image: XmasImage | null = name == "" ? null : images[hexStringToDecimalDig
     </>
     }
   </section>
-  {image ? <Image src={image.src} alt={image.alt} /> : <span />}
+  {image ? <img src={image.src} alt={image.alt} /> : <span />}
 </main>
 </div>
 
