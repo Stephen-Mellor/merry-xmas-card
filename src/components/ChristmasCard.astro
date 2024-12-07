@@ -1,11 +1,111 @@
 ---
+import { Image } from 'astro:assets';
+import baubleImage from '@assets/bauble.png';
+import christmasPuddingImage from '@assets/christmas-pudding.png';
+import hollyImage from '@assets/holly.png';
+import presentImage from '@assets/present.png';
+import santaHatImage from '@assets/santa-hat.png';
+import sleighImage from '@assets/sleigh.png';
+import snowflakeImage from '@assets/snowflake.png';
+import snowmanImage from '@assets/snowman.png';
+import stockingImage from '@assets/stocking.png';
+import treeImage from '@assets/tree.png';
+import { hash, hexStringToDecimalDigit } from 'src/utils/string';
+import type { ImageMetadata } from 'astro';
+
 type Props = {
   name: string;
 }
 
+type XmasImage = {src: ImageMetadata, alt: string}
+
+const images: {[key: number]: XmasImage} = {
+  0: {src: baubleImage, alt: "Bauble"},
+  1: {src: christmasPuddingImage, alt: "Christmas Pudding"},
+  2: {src: hollyImage, alt: "Sprig of Holly"},
+  3: {src: presentImage, alt: "Christmas Present"},
+  4: {src: santaHatImage, alt: "Santa Hat"},
+  5: {src: sleighImage, alt: "Sleigh"},
+  6: {src: snowflakeImage, alt: "Snowflake"},
+  7: {src: snowmanImage, alt: "Snowman"},
+  8: {src: stockingImage, alt: "Christmas Stocking"},
+  9: {src: treeImage, alt: "Christmas Tree"},
+}
+
 const {name} = Astro.props;
+
+const image: XmasImage = images[hexStringToDecimalDigit(await hash(name))];
 ---
+<div>
+<main>
 
+  <Image src={image.src} alt={image.alt} />
+  <section>
+    <p>Merry Christmas</p>
+    <p>{name}!</p>
+    <p>From Stephen</p>
+  </section>
+  <Image src={image.src} alt={image.alt} />
+</main>
+</div>
 
-<style>
+<style lang="scss">
+  @keyframes fadeIn {
+    from {opacity: 0}
+    to {opacity: 1}
+  }
+
+  div {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    display: grid;
+    place-content: center;
+  }
+  main {
+    margin-inline: auto;
+    display: grid;
+    gap: 2rem;
+    justify-items: center;
+    grid-template-columns: 1fr;
+
+    @media only screen and (min-width: 800px) {
+      align-items: center;
+      grid-template-columns: 1fr min-content;
+    }
+    @media only screen and (min-width: 1200px) {
+      align-items: center;
+      grid-template-columns: min-content 1fr min-content;
+    }
+  }
+  img {
+    width: 200px;
+    height: 200px;
+    animation-name: fadeIn;
+    animation-duration: 5s;
+    animation-delay: 5s;
+    animation-fill-mode: both;
+
+    &:first-child {
+      display: none;
+      @media only screen and (min-width: 1200px) {
+        display: inline;
+      }
+    }
+  }
+  section {
+    margin-inline: auto;
+    font-size: 2rem;
+    text-transform: uppercase;
+    animation-name: fadeIn;
+    animation-duration: 5s;
+    animation-fill-mode: both;
+    @media only screen and (min-width: 800px) {
+      font-size: 3rem
+    }
+  }
+  p {
+    margin-block: 0;
+    text-align: center;
+  }
 </style>

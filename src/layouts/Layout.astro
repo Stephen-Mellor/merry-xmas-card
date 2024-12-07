@@ -21,6 +21,8 @@
 		height: 100%;
 		background-color: #070740;
 		overflow: hidden;
+		font-family: Tahoma, sans-serif;
+		color: #ffffff;
 	}
 </style>
 
@@ -53,7 +55,7 @@
 	}
 	const snowPiles: {[key: number]: number} = {};
 	const calculatedSnowPiles: {[key: number]: number} = {};
-	const SNOWPILE_SIZE_RATE = 25;
+	const SNOWPILE_SIZE_RATE = 2;
 	const snowDrops: {x: number, y: number, size: number, dropSpeed: number, horizontalOscillation: number, oscillationOffset: number, timeAlive: number}[] = [];
 	
 	(function init() {
@@ -66,17 +68,13 @@
   	window.requestAnimationFrame(draw);
 	})();
 
-	function drawStaticObjects() {
-		
-	}
-
 	function generateSnowDrop() {
 		const size = Math.random() * 5;
 		snowDrops.push({
 			x: Math.random() * (window.innerWidth * scale + 2 * 20) - 20,
 			y: -size,
 			size,
-			dropSpeed: Math.random() + 30,
+			dropSpeed: Math.random() * 2 + 2,
 			horizontalOscillation: 5 * Math.random() + 5,
 			oscillationOffset: Math.random() * 2 * Math.PI,
 			timeAlive: 0
@@ -103,25 +101,22 @@
 			} else {
 				snowDrops.splice(i, 1);
 				const nearestIntegerX = Math.floor(snowDrop.x + snowDrop.horizontalOscillation * Math.sin(snowDrop.timeAlive / 50 + snowDrop.oscillationOffset));
-				if (nearestIntegerX in snowPiles) {
-					snowPiles[nearestIntegerX] += snowDrop.size;
-				} else {
-					snowPiles[nearestIntegerX] = snowDrop.size;
-				}
+				addSnowballToSnowpiles(snowDrop.size, nearestIntegerX);
 			}
 		}
 
 		ctx.moveTo(0, window.innerHeight * scale - calculateSnowPileHeight(0) * SNOWPILE_SIZE_RATE);
 		ctx.beginPath()
-		for (let i = 1; i < window.innerWidth * scale; i++) {
-			ctx.lineTo(i, window.innerHeight * scale - calculateSnowPileHeight(i) * SNOWPILE_SIZE_RATE);
+		for (let i = 3; i < window.innerWidth * scale + 3; i+=3) {
+			ctx.bezierCurveTo(
+				i-2, window.innerHeight * scale - calculateSnowPileHeight(i-2) * SNOWPILE_SIZE_RATE,
+				i-1, window.innerHeight * scale - calculateSnowPileHeight(i-1) * SNOWPILE_SIZE_RATE,
+				i, window.innerHeight * scale - calculateSnowPileHeight(i) * SNOWPILE_SIZE_RATE);
 		}
 		ctx.lineTo(Math.floor(window.innerWidth * scale), Math.ceil(window.innerHeight * scale)); 
 		ctx.lineTo(0, Math.ceil(window.innerHeight * scale)); 
 		ctx.fill();
 		ctx.stroke();
-
-		drawStaticObjects();
 
 		ctx.save();
 
@@ -144,6 +139,22 @@
 			}, [0,0]);
 		calculatedSnowPiles[i] = calculatedSnowPileHeight[0] / calculatedSnowPileHeight[1]
 		return calculatedSnowPileHeight[0] / calculatedSnowPileHeight[1];
+	}
+
+	function addSnowballToSnowpiles(size: number, location: number) {
+		[-5,-4,-3,-2,-1,1,2,3,4,5].forEach(element => {
+			const surroundingLocation = location + element
+			if (surroundingLocation in snowPiles) {
+				snowPiles[surroundingLocation] += (size / Math.abs(element));
+			} else {
+				snowPiles[surroundingLocation] = (size / Math.abs(element));
+			}
+		});
+		if (location in snowPiles) {
+			snowPiles[location] += size;
+		} else {
+			snowPiles[location] = size;
+		}
 	}
 
 	setInterval(generateSnowDrop, window.innerWidth / 100)
