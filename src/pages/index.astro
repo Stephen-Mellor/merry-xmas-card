@@ -4,9 +4,8 @@ import Layout from '../layouts/Layout.astro';
 import { base64ToString } from '../utils/string';
 
 const name = base64ToString(Astro.url.searchParams.get('n') ?? "");
-if (name == "") return new Response(null, { status: 404 });
 ---
 
 <Layout>
-	<ChristmasCard name={base64ToString(Astro.url.searchParams.get('n') ?? "")} />
+	<ChristmasCard name={name} />
 </Layout>

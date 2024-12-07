@@ -34,18 +34,22 @@ const images: {[key: number]: XmasImage} = {
 
 const {name} = Astro.props;
 
-const image: XmasImage = images[hexStringToDecimalDigit(await hash(name))];
+const image: XmasImage | null = name == "" ? null : images[hexStringToDecimalDigit(await hash(name))];
 ---
 <div>
 <main>
 
-  <Image src={image.src} alt={image.alt} />
+  {image ? <Image src={image.src} alt={image.alt} /> : <span />}
   <section>
-    <p>Merry Christmas</p>
-    <p>{name}!</p>
-    <p>From Stephen</p>
+    {name == "" ? <><p>Error 404</p><p>Christmas Card</p><p>Not Found</p></> :
+    <>
+      <p>Merry Christmas</p>
+      <p>{name}!</p>
+      <p>From Stephen</p>
+    </>
+    }
   </section>
-  <Image src={image.src} alt={image.alt} />
+  {image ? <Image src={image.src} alt={image.alt} /> : <span />}
 </main>
 </div>
 
