@@ -3,12 +3,13 @@
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="icon" type="image/x-icon" href="/favicon.ico" />
 		<meta name="generator" content={Astro.generator} />
-		<title>Astro Basics</title>
+		<title>Merry Christmas</title>
 	</head>
 	<body>
 		<slot />
+		<canvas id="snowyLandscape" />
 	</body>
 </html>
 
@@ -18,5 +19,132 @@
 		margin: 0;
 		width: 100%;
 		height: 100%;
+		background-color: #070740;
+		overflow: hidden;
 	}
 </style>
+
+<script>
+	const snowyLandscape = document.getElementById("snowyLandscape") as HTMLCanvasElement;
+	const ctx = snowyLandscape.getContext("2d")!;
+	const scale = window.devicePixelRatio;
+	const snowPileWeights = {
+		0: 105.5, // Will be doubled
+		1: 191,
+		2: 172,
+		3: 154,
+		4: 137,
+		5: 121,
+		6: 106,
+		7: 92,
+		8: 79,
+		9: 67,
+		10: 56,
+		11: 46,
+		12: 37,
+		13: 29,
+		14: 22,
+		15: 16,
+		16: 11,
+		17: 7,
+		18: 4,
+		19: 2,
+		20: 1
+	}
+	const snowPiles: {[key: number]: number} = {};
+	const calculatedSnowPiles: {[key: number]: number} = {};
+	const SNOWPILE_SIZE_RATE = 25;
+	const snowDrops: {x: number, y: number, size: number, dropSpeed: number, horizontalOscillation: number, oscillationOffset: number, timeAlive: number}[] = [];
+	
+	(function init() {
+		snowyLandscape.style.width = "100%";
+		snowyLandscape.style.height = "100%";
+		
+		snowyLandscape.width = Math.floor(window.innerWidth * scale);
+		snowyLandscape.height = Math.floor(window.innerHeight * scale);
+		
+  	window.requestAnimationFrame(draw);
+	})();
+
+	function drawStaticObjects() {
+		
+	}
+
+	function generateSnowDrop() {
+		const size = Math.random() * 5;
+		snowDrops.push({
+			x: Math.random() * (window.innerWidth * scale + 2 * 20) - 20,
+			y: -size,
+			size,
+			dropSpeed: Math.random() + 30,
+			horizontalOscillation: 5 * Math.random() + 5,
+			oscillationOffset: Math.random() * 2 * Math.PI,
+			timeAlive: 0
+		})
+	}
+
+	function draw() {
+	  ctx.globalCompositeOperation = "destination-over";
+	  ctx.reset();
+
+		ctx.fillStyle = "#ffffff";
+	  ctx.strokeStyle = "#ffffff";
+		ctx.stroke
+
+		for (let i = snowDrops.length - 1; i >= 0; i--) {
+			const snowDrop = snowDrops[i];
+			snowDrop.y += snowDrop.dropSpeed;
+			snowDrop.timeAlive += 1;
+			if (snowDrop.y <= window.innerHeight * scale - (calculatedSnowPiles[Math.floor(snowDrop.x + snowDrop.horizontalOscillation * Math.sin(snowDrop.timeAlive / 50 + snowDrop.oscillationOffset))] ?? 0) * SNOWPILE_SIZE_RATE) {
+				ctx.beginPath();
+				ctx.arc(snowDrop.x + snowDrop.horizontalOscillation * Math.sin(snowDrop.timeAlive / 50 + snowDrop.oscillationOffset), snowDrop.y, snowDrop.size, 0, 2 * Math.PI);
+				ctx.fill();
+				ctx.stroke();
+			} else {
+				snowDrops.splice(i, 1);
+				const nearestIntegerX = Math.floor(snowDrop.x + snowDrop.horizontalOscillation * Math.sin(snowDrop.timeAlive / 50 + snowDrop.oscillationOffset));
+				if (nearestIntegerX in snowPiles) {
+					snowPiles[nearestIntegerX] += snowDrop.size;
+				} else {
+					snowPiles[nearestIntegerX] = snowDrop.size;
+				}
+			}
+		}
+
+		ctx.moveTo(0, window.innerHeight * scale - calculateSnowPileHeight(0) * SNOWPILE_SIZE_RATE);
+		ctx.beginPath()
+		for (let i = 1; i < window.innerWidth * scale; i++) {
+			ctx.lineTo(i, window.innerHeight * scale - calculateSnowPileHeight(i) * SNOWPILE_SIZE_RATE);
+		}
+		ctx.lineTo(Math.floor(window.innerWidth * scale), Math.ceil(window.innerHeight * scale)); 
+		ctx.lineTo(0, Math.ceil(window.innerHeight * scale)); 
+		ctx.fill();
+		ctx.stroke();
+
+		drawStaticObjects();
+
+		ctx.save();
+
+	  window.requestAnimationFrame(draw);
+	}
+
+	function calculateSnowPileHeight(i: number) {
+		const calculatedSnowPileHeight = Object.entries(snowPileWeights).reduce<[number,number]>(([totalVal, totalWeight], [diff,weight]) => {
+				const negativeSide = i - Number(diff);
+				if (0 <= negativeSide && negativeSide < window.innerWidth * scale) {
+					totalVal += (snowPiles[negativeSide] ?? 0) * weight;
+					totalWeight += weight;
+				}
+				const positiveSide = i + Number(diff);
+				if (0 <= positiveSide && positiveSide < window.innerWidth * scale) {
+					totalVal += (snowPiles[positiveSide] ?? 0) * weight;
+					totalWeight += weight;
+				}
+				return [totalVal, totalWeight]
+			}, [0,0]);
+		calculatedSnowPiles[i] = calculatedSnowPileHeight[0] / calculatedSnowPileHeight[1]
+		return calculatedSnowPileHeight[0] / calculatedSnowPileHeight[1];
+	}
+
+	setInterval(generateSnowDrop, window.innerWidth / 100)
+</script>

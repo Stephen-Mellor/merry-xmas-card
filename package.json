@@ -10,6 +10,13 @@
 		"preinstall": "npx only-allow pnpm"
 	},
 	"dependencies": {
-		"astro": "^5.0.3"
+		"@astrojs/vercel": "^8.0.0",
+		"astro": "^5.0.3",
+		"atob": "^2.1.2",
+		"btoa": "^1.2.1"
+	},
+	"devDependencies": {
+		"@types/atob": "^2.1.4",
+		"@types/btoa": "^1.2.5"
 	}
 }
