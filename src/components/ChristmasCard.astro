@@ -33,7 +33,7 @@ const image: XmasImage | null = name == "" ? null : images[hexStringToDecimalDig
     <>
       <p>Merry Christmas</p>
       <p>{name}!</p>
-      <p>From Stephen</p>
+      {process.env.PUBLIC_CARD_FROM && <p>From {process.env.PUBLIC_CARD_FROM}</p>}
     </>
     }
   </section>
