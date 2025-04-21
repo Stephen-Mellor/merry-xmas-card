@@ -1,50 +1,73 @@
 ---
-import { hash, hexStringToDecimalDigit } from '../utils/string';
+import { hash, hexStringToDecimalDigit } from "../utils/string";
 
 type Props = {
   name: string;
-}
+};
 
-type XmasImage = {src: string, alt: string}
+type XmasImage = { src: string; alt: string };
 
-const images: {[key: number]: XmasImage} = {
-  0: {src: "/assets/bauble.png", alt: "Bauble"},
-  1: {src: "/assets/christmas-pudding.png", alt: "Christmas Pudding"},
-  2: {src: "/assets/holly.png", alt: "Sprig of Holly"},
-  3: {src: "/assets/present.png", alt: "Christmas Present"},
-  4: {src: "/assets/santa-hat.png", alt: "Santa Hat"},
-  5: {src: "/assets/sleigh.png", alt: "Sleigh"},
-  6: {src: "/assets/snowflake.png", alt: "Snowflake"},
-  7: {src: "/assets/snowman.png", alt: "Snowman"},
-  8: {src: "/assets/stocking.png", alt: "Christmas Stocking"},
-  9: {src: "/assets/tree.png", alt: "Christmas Tree"},
-}
+const images: { [key: number]: XmasImage } = {
+  0: { src: "/assets/bauble.png", alt: "Bauble" },
+  1: { src: "/assets/christmas-pudding.png", alt: "Christmas Pudding" },
+  2: { src: "/assets/holly.png", alt: "Sprig of Holly" },
+  3: { src: "/assets/present.png", alt: "Christmas Present" },
+  4: { src: "/assets/santa-hat.png", alt: "Santa Hat" },
+  5: { src: "/assets/sleigh.png", alt: "Sleigh" },
+  6: { src: "/assets/snowflake.png", alt: "Snowflake" },
+  7: { src: "/assets/snowman.png", alt: "Snowman" },
+  8: { src: "/assets/stocking.png", alt: "Christmas Stocking" },
+  9: { src: "/assets/tree.png", alt: "Christmas Tree" },
+};
 
-const {name} = Astro.props;
+const { name } = Astro.props;
 
-const image: XmasImage | null = name == "" ? null : images[hexStringToDecimalDigit(await hash(name))];
+const image: XmasImage | null =
+  name === ""
+    ? null
+    : images[
+        hexStringToDecimalDigit(
+          await hash(`${name}${new Date().getFullYear()}`),
+        )
+      ];
 ---
-<div>
-<main>
 
-  {image ? <img src={image.src} alt={image.alt} /> : <span />}
-  <section>
-    {name == "" ? <><p>Error 404</p><p>Christmas Card</p><p>Not Found</p></> :
-    <>
-      <p>Merry Christmas</p>
-      <p>{name}!</p>
-      {process.env.PUBLIC_CARD_FROM && <p>From {process.env.PUBLIC_CARD_FROM}</p>}
-    </>
-    }
-  </section>
-  {image ? <img src={image.src} alt={image.alt} /> : <span />}
-</main>
+<div>
+  <main>
+    {image ? <img src={image.src} alt={image.alt} /> : <span />}
+
+    <section>
+      {
+        name == "" ? (
+          <>
+            <p>Error 404</p>
+            <p>Christmas Card</p>
+            <p>Not Found</p>
+          </>
+        ) : (
+          <>
+            <p>Merry Christmas</p>
+            <p>{name}!</p>
+            {process.env.PUBLIC_CARD_FROM && (
+              <p>From {process.env.PUBLIC_CARD_FROM}</p>
+            )}
+          </>
+        )
+      }
+    </section>
+
+    {image ? <img src={image.src} alt={image.alt} /> : <span />}
+  </main>
 </div>
 
 <style lang="scss">
   @keyframes fadeIn {
-    from {opacity: 0}
-    to {opacity: 1}
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
   }
 
   div {
@@ -54,6 +77,7 @@ const image: XmasImage | null = name == "" ? null : images[hexStringToDecimalDig
     display: grid;
     place-content: center;
   }
+
   main {
     margin-inline: auto;
     display: grid;
@@ -70,6 +94,7 @@ const image: XmasImage | null = name == "" ? null : images[hexStringToDecimalDig
       grid-template-columns: min-content 1fr min-content;
     }
   }
+
   img {
     width: 200px;
     height: 200px;
@@ -85,6 +110,7 @@ const image: XmasImage | null = name == "" ? null : images[hexStringToDecimalDig
       }
     }
   }
+
   section {
     margin-inline: auto;
     font-size: 2rem;
@@ -93,9 +119,10 @@ const image: XmasImage | null = name == "" ? null : images[hexStringToDecimalDig
     animation-duration: 5s;
     animation-fill-mode: both;
     @media only screen and (min-width: 800px) {
-      font-size: 3rem
+      font-size: 3rem;
     }
   }
+
   p {
     margin-block: 0;
     text-align: center;

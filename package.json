@@ -18,6 +18,8 @@
 	"devDependencies": {
 		"@types/atob": "^2.1.4",
 		"@types/btoa": "^1.2.5",
+		"prettier": "^3.5.3",
+		"prettier-plugin-astro": "^0.14.1",
 		"sass-embedded": "^1.82.0"
 	}
 }

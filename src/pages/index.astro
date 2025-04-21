@@ -1,11 +1,11 @@
 ---
-import ChristmasCard from '../components/ChristmasCard.astro';
-import Layout from '../layouts/Layout.astro';
-import { base64ToString } from '../utils/string';
+import ChristmasCard from "../components/ChristmasCard.astro";
+import Layout from "../layouts/Layout.astro";
+import { base64ToString } from "../utils/string";
 
-const name = base64ToString(Astro.url.searchParams.get('n') ?? "");
+const name = base64ToString(Astro.url.searchParams.get("n") ?? "");
 ---
 
 <Layout>
-	<ChristmasCard name={name} />
+  <ChristmasCard name={name} />
 </Layout>
